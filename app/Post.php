@@ -9,7 +9,7 @@ class Post extends Model
     // This is the method to get our posts from the session
     public function getPosts($session) {
       if (!$session->has('posts')) { // Here we check to see if  our session has variable posts
-        $this->createDumyData($session)
+        $this->createDumyData($session);
       }
       return $session->get('posts');
     }
@@ -28,4 +28,5 @@ class Post extends Model
         ]
       ];
       $session->put('posts', $posts); // Here we store this default data in to our session_destroy
+   }
 }
