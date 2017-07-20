@@ -12,7 +12,7 @@
 */
 
 // Home page routes
-Route::get('/', 'PostController@getIndex')->name('blog.index');
+Route::get('/', ['uses' => 'PostController@getIndex', 'as' => 'blog.index']); // Here we use syntax to nickname routes
 
 Route::get('post/{id}', function ($id) {
   if ($id  == 1) {
