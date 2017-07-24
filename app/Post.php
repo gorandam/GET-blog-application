@@ -1,4 +1,3 @@
-u
 <?php
 
 namespace App;
