@@ -27,12 +27,12 @@ class PostController extends Controller
     // This is the method to acess and display single post
     public function getPost(Store $session, $id) {
       $post = new Post();
-      $posts = $post->getPost($session, $id);// Here we call our Model object method to retrieve single post and save it to the variable
-      return view('admin.index', ['posts' => $posts]);// here we retrun View response object and pased retrived data to the our view
+      $post = $post->getPost($session, $id);// Here we call our Model object method to retrieve single post and save it to the variable
+      return view('blog.post', ['post' => $post]);// here we retrun View response object and pased retrived data to the our view
     }
      // Here are ADMIN methods
     // This is the method that allows admin to create new post
-    public function getAdminCreate(Store $session, $id) {
+    public function getAdminCreate() {
       return view('admin.create'); // This returns admin create template to create posts by admin
     }
 

@@ -14,7 +14,7 @@ class Post extends Model
       return $session->get('posts');
     }
     // This is the method to retrieve our single post from session array
-    public function getPost($session) {
+    public function getPost($session, $id) {
       if (!$session->has('posts')) { // Here we check to see if  our session has variable posts
         $this->createDumyData($session);
       }
