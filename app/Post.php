@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
+
+    // This is the code that give us opportunity to populate our table in one step - mass-assaingable
+    protected $fillable = ['title', 'content'];
+    
     // This is the method to get our posts from the session
     public function getPosts($session) {
       if (!$session->has('posts')) { // Here we check to see if  our session has variable posts
