@@ -49,8 +49,13 @@ class PostController extends Controller
         'title' => 'required|min:5',
         'content' => 'required|min:10'
       ]);
-      $post = new Post();
-      $post = $post->addPost($session, $request->input('title'), $request->input('content')); // Here we use $request->input() method to retrieve users inpit from request
+      $post = new Post([
+        'title' => $request->input('title'),// Third, we use $request->input method to access to the user input in $request insatnce....
+        'content' => $request->input('content')
+      ]);// Here we create instance of our Post model = this maps our table in database...
+      ///$post->title = .... Here we acess to propery of $post instance,  $post instance which is equal to posts table row...properties = columns and assing new value to it
+      $post->save();
+
       return redirect()->route('admin.index')->with('info', 'Post created, Title is: ' . $request->input('title'));// Here we return Redirect HTTP header object with specified url
     }
 
