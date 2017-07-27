@@ -10,24 +10,21 @@ use Illuminate\Session\Store;// Here we use this namespade to DI and resolve thi
 
 class PostController extends Controller
 {
-    // This is the method to display our retrieved data (posts) from session
-    public function getIndex(Store $session) {
-      $post = new Post();
-      $posts = $post->getPosts($session);// Here we call our Model object method to check if we store data in session and retrive that data(nested enumerated array) and save it in the variable
+    // This is the method to fetch and display our retrieved data (posts) from database
+    public function getIndex() {
+      $posts = Post::all();//Here we use our eloqent class database query fetch method to fetch data from database in form of collection object.
       return view('blog.index', ['posts' => $posts]);// here we retrun View response object and pased retrived data to the our view
     }
 
     // This is the method to display all our posts for the admin
-    public function getAdminIndex(Store $session) {
-      $post = new Post();
-      $posts = $post->getPosts($session);// Here we call our Model object method to check if we store data in session and retrive that data(nested enumerated array) and save it in the variable
+    public function getAdminIndex() {
+      $posts = Post::all();
       return view('admin.index', ['posts' => $posts]);// here we retrun View response object and pased retrived data to the our view
     }
 
-    // This is the method to acess and display single post
-    public function getPost(Store $session, $id) {
-      $post = new Post();
-      $post = $post->getPost($session, $id);// Here we call our Model object method to retrieve single post and save it to the variable
+    // This is the method to acess and display single post at home page
+    public function getPost($id) {
+      $post = Post::find($id);//Here we use our find fetch method to find single post with this $id
       return view('blog.post', ['post' => $post]);// here we retrun View response object and pased retrived data to the our view
     }
      // Here are ADMIN methods
@@ -36,15 +33,14 @@ class PostController extends Controller
       return view('admin.create'); // This returns admin create template to create posts by admin
     }
 
-    // This is the method that allows admin to edit post
-    public function getAdminEdit(Store $session, $id) {
-      $post = new Post();
-      $post = $post->getPost($session, $id);// Here we call our Model object method to retrieve single post that we want to edit and save it to the variable
+    // This is the method that allows admin to edit one post
+    public function getAdminEdit($id) {
+      $post = Post::find($id);
       return view('admin.edit', ['post' => $post, 'postId' => $id]);// here we retrun View response object and pased retrived data to the our view
     }
 
     // This is the method triggered when user (admin) submits our admin.create
-    public function postAdminCreate(Store $session, Request $request) {
+    public function postAdminCreate(Request $request) {
       $this->validate($request, [ // Here we place our validation logic
         'title' => 'required|min:5',
         'content' => 'required|min:10'
