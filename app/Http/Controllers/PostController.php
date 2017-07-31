@@ -41,6 +41,7 @@ class PostController extends Controller
 
     // This is the method triggered when user (admin) submits our admin.create
     public function postAdminCreate(Request $request) {
+      //var_dump($request);
       $this->validate($request, [ // Here we place our validation logic
         'title' => 'required|min:5',
         'content' => 'required|min:10'
@@ -53,20 +54,27 @@ class PostController extends Controller
       $post->save();
 
       return redirect()->route('admin.index')->with('info', 'Post created, Title is: ' . $request->input('title'));// Here we return Redirect HTTP header object with specified url
+      
     }
 
     //This is the method triggered when user (admin) submits admin.edit form
-    public function postAdminUpdate(Store $session, Request $request) {
+    public function postAdminUpdate(Request $request) {
       $this->validate($request, [ // Here we place our validation logic
         'title' => 'required|min:5',
         'content' => 'required|min:10'
       ]);
-      $post = new Post();
-      $post = $post->editPost($session, $request->input('id'), $request->input('title'), $request->input('content')); // Here we use $request->input() method to retrieve users inpit from request
+      $post = Post::find($request->input('id')); // Here we use $request->input() method to retrieve users input id  from request - and we find eloquen model instance(row) which we want to update
+      $post->title = $request->input('title'); // Here we overrides our title and content propeties of our eloquent model instance(row)
+      $post->content = $request->input('content');
+      $post->save();// Here we save it again in the database
       return redirect()->route('admin.index')->with('info', 'Post edited, new Title is: ' . $request->input('title'));
     }
 
-
+    public function getAdminDelete($id) {
+      $post = Post::find($id);
+      $post->delete();
+      return redirect()->route('admin.index')->with('info', 'Post deleted');
+    }
 
 
 
