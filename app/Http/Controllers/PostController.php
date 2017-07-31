@@ -5,26 +5,24 @@ namespace App\Http\Controllers;
 use App\Post;// We use it to import post model
 use Illuminate\Http\Request;
 
-use  App\Http\Requests;
-use Illuminate\Session\Store;// Here we use this namespade to DI and resolve this service from laravel container
 
 class PostController extends Controller
 {
     // This is the method to fetch and display our retrieved data (posts) from database
     public function getIndex() {
-      $posts = Post::all();//Here we use our eloqent class database query fetch method to fetch data from database in form of collection object.
+      $posts = Post::orderBy('created_at', 'desc')->get();//Here we use our costrains to substitute all() fetch method
       return view('blog.index', ['posts' => $posts]);// here we retrun View response object and pased retrived data to the our view
     }
 
     // This is the method to display all our posts for the admin
     public function getAdminIndex() {
-      $posts = Post::all();
+      $posts = Post::orderBy('title', 'asc')->get(); //Here we replace our fetch method with orderBy and get() with ascending alphabetical
       return view('admin.index', ['posts' => $posts]);// here we retrun View response object and pased retrived data to the our view
     }
 
     // This is the method to acess and display single post at home page
     public function getPost($id) {
-      $post = Post::find($id);//Here we use our find fetch method to find single post with this $id
+      $post = Post::where('id', $id)->first();//Here we use our find fetch method to find single post with this $id and replace it with compex eloquent query using when() and firs()
       return view('blog.post', ['post' => $post]);// here we retrun View response object and pased retrived data to the our view
     }
      // Here are ADMIN methods
@@ -54,7 +52,7 @@ class PostController extends Controller
       $post->save();
 
       return redirect()->route('admin.index')->with('info', 'Post created, Title is: ' . $request->input('title'));// Here we return Redirect HTTP header object with specified url
-      
+
     }
 
     //This is the method triggered when user (admin) submits admin.edit form
@@ -71,9 +69,9 @@ class PostController extends Controller
     }
 
     public function getAdminDelete($id) {
-      $post = Post::find($id);
-      $post->delete();
-      return redirect()->route('admin.index')->with('info', 'Post deleted');
+      $post = Post::find($id);//Select eloquent model
+      $post->delete();// delete it with oudr delete() eloquent method method
+      return redirect()->route('admin.index')->with('info', 'Post deleted!!!');// We redirect it to the admin index
     }
 
 
