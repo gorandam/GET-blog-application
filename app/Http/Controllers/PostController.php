@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Like; // Here we import in namespace Like model
 use App\Post;// We use it to import post model
 use Illuminate\Http\Request;
 
@@ -25,6 +26,16 @@ class PostController extends Controller
       $post = Post::where('id', $id)->first();//Here we use our find fetch method to find single post with this $id and replace it with compex eloquent query using when() and firs()
       return view('blog.post', ['post' => $post]);// here we retrun View response object and pased retrived data to the our view
     }
+
+    // This is the method to acess and display like of single post at home page
+    public function getLikePost($id) {
+      $post = Post::where('id', $id)->first();//Here we use our find fetch method to find single post with this $id and replace it with compex eloquent query using when() and first()
+      $like = new Like();
+      $post->likes()->save($like);
+      //var_dump($post->likes());//  This will return instance of lluminate\Database\Eloquent\Relations\HasMany class that investigate if relationship  exists
+      return redirect()->back(); // This will brings us back in the single post page.....
+    }
+
      // Here are ADMIN methods
     // This is the method that allows admin to create new post
     public function getAdminCreate() {
@@ -70,6 +81,7 @@ class PostController extends Controller
 
     public function getAdminDelete($id) {
       $post = Post::find($id);//Select eloquent model
+      $post->likes()->delete(); // Here we select all realted likes eloquet model instances and delete it...
       $post->delete();// delete it with oudr delete() eloquent method method
       return redirect()->route('admin.index')->with('info', 'Post deleted!!!');// We redirect it to the admin index
     }
