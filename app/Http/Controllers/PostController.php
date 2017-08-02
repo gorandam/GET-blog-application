@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Like; // Here we import in namespace Like model
 use App\Post;// We use it to import post model
+use App\Tag;// Here we import in namespace Tag model
 use Illuminate\Http\Request;
 
 
@@ -23,7 +24,7 @@ class PostController extends Controller
 
     // This is the method to acess and display single post at home page
     public function getPost($id) {
-      $post = Post::where('id', $id)->first();//Here we use our find fetch method to find single post with this $id and replace it with compex eloquent query using when() and firs()
+      $post = Post::where('id', $id)->with('likes')->first();//Here we use our find fetch method to find single post with this $id and replace it with compex eloquent query using when() and firs()
       return view('blog.post', ['post' => $post]);// here we retrun View response object and pased retrived data to the our view
     }
 
@@ -39,13 +40,15 @@ class PostController extends Controller
      // Here are ADMIN methods
     // This is the method that allows admin to create new post
     public function getAdminCreate() {
-      return view('admin.create'); // This returns admin create template to create posts by admin
+      $tags = Tag::all();
+      return view('admin.create', ['tags' => $tags]); // This returns admin create template to create posts by admin and we here pass view data
     }
 
     // This is the method that allows admin to edit one post
     public function getAdminEdit($id) {
       $post = Post::find($id);
-      return view('admin.edit', ['post' => $post, 'postId' => $id]);// here we retrun View response object and pased retrived data to the our view
+      $tags = Tag::all();// This will retrun collection object of all tag instances
+      return view('admin.edit', ['post' => $post, 'postId' => $id, 'tags' => $tags]);// here we retrun View response object and pased retrived data to the our view
     }
 
     // This is the method triggered when user (admin) submits our admin.create
@@ -61,6 +64,7 @@ class PostController extends Controller
       ]);// Here we create instance of our Post model = this maps our table in database...
       ///$post->title = .... Here we acess to propery of $post instance,  $post instance which is equal to posts table row...properties = columns and assing new value to it
       $post->save();
+      $post->tags()->attach($request->input('tags') === null ? [] : $request->input('tags')); //Here we create many to many relations ant tells laravel that with this post id in  post_id field  and save ids from all tags model instaces from array. in tag_id fields..
 
       return redirect()->route('admin.index')->with('info', 'Post created, Title is: ' . $request->input('title'));// Here we return Redirect HTTP header object with specified url
 
@@ -76,12 +80,17 @@ class PostController extends Controller
       $post->title = $request->input('title'); // Here we overrides our title and content propeties of our eloquent model instance(row)
       $post->content = $request->input('content');
       $post->save();// Here we save it again in the database
+      //$post->tags()->detach();
+      //$post->tags()->attach($request->input('tags') === null ? [] : $request->input('tags')); // We can do it this way but we have better way
+      $post->tags()->sync($request->input('tags') === null ? [] : $request->input('tags'));// We still use $post-tags() method with ->sync() method....sync() tells Laravel to figure out which tags actually changed, and this will only detach the tags which are not use anymore, and attach the new ones, so this is more efficient.
+
       return redirect()->route('admin.index')->with('info', 'Post edited, new Title is: ' . $request->input('title'));
     }
 
     public function getAdminDelete($id) {
       $post = Post::find($id);//Select eloquent model
       $post->likes()->delete(); // Here we select all realted likes eloquet model instances and delete it...
+      $post->tags()->detach();// Here we detache all tags - remove relations and delete all tags model instances...
       $post->delete();// delete it with oudr delete() eloquent method method
       return redirect()->route('admin.index')->with('info', 'Post deleted!!!');// We redirect it to the admin index
     }

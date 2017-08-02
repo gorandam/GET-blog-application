@@ -12,6 +12,11 @@ class Post extends Model
 
     // Here we create our database tables reltionship method
     public function likes() {
-      return $this->hasMany('App\Like'); //here we define that our posts table has many likes from likes table.... 
+      return $this->hasMany('App\Like'); //here we define that our posts table has many likes from likes table....
+    }
+
+    //Here we define many-to-many relationship method
+    public function tags() {
+      return $this->belongsToMany('App\Tag')->withTimestamps();
     }
 }
