@@ -20,10 +20,13 @@ class Post extends Model
       return $this->belongsToMany('App\Tag')->withTimestamps();
     }
 
-    public function setTitleAttribute($value) {
-      $this->attributes['title'] = strtolower($value);
+    // Here we define mutators and accessors
+    //Mutator
+    public function setTitleAttribute($value) { // This mutator will be automatically called when we attempt to set the value of the title property
+      $this->attributes['title'] = strtolower($value);// This will save set value in the Eloquent model internal $attributes property
     }
-    public function getTitleAttribute($value) {
+    //Accessor
+    public function getTitleAttribute($value) { // This accessor will automatically be called by Eloquent when attempting to retrieve the value of the title property
       return strtoupper($value);
     }
 }

@@ -12,7 +12,7 @@ class PostController extends Controller
 {
     // This is the method to fetch and display our retrieved data (posts) from database
     public function getIndex() {
-      $posts = Post::orderBy('created_at', 'desc')->get();//Here we use our costrains to substitute all() fetch method
+      $posts = Post::orderBy('created_at', 'desc')->paginate(2); // Here we use paginate method with argument of number of posts per page...It will retrieve all posts dispayed to more pages..
       return view('blog.index', ['posts' => $posts]);// here we retrun View response object and pased retrived data to the our view
     }
 
